@@ -2,6 +2,7 @@ import { GoogleAuthProvider, getAuth, signInWithPopup, signOut } from "firebase/
 import logo from './logo.svg';
 import { useState } from 'react';
 import './App.css';
+import Tasks from "./Tasks";
 
 function App() {
   const provider = new GoogleAuthProvider();
@@ -67,6 +68,8 @@ function App() {
         {authorizedUser ? (
         <>
           <p>Authorized user</p>
+          <h1>Tasks</h1>
+          <Tasks token={sessionStorage.getItem("accessToken")}/>
           <button onClick={logoutUser}>Logout Button</button>
         </>
       ): (

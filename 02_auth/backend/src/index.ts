@@ -4,12 +4,14 @@ import * as dotenv from 'dotenv'
 dotenv.config()
 
 import express, { Request, Response, NextFunction } from 'express'
+import cors from 'cors'
 import pino from 'express-pino-logger'
 import { logger } from './logger'
 import bodyParser from 'body-parser'
 import { rootRouter } from '../routes/root'
 import { pingRouter } from '../routes/ping'
 import { sleepRouter } from '../routes/sleep'
+import { taskRouter } from '../routes/task'
 
 function shutDown() {
     return new Promise((resolve, reject) => {
@@ -20,6 +22,7 @@ function shutDown() {
 export const app = express()
 const port = process.env.PORT || 8000
 
+app.use(cors())
 // Use body parser to read sent json payloads
 app.use(
     bodyParser.urlencoded({
@@ -32,6 +35,7 @@ app.use(pino())
 app.use('/api', rootRouter)
 app.use('/api/ping', pingRouter)
 app.use('/api/sleep', sleepRouter)
+app.use('/api/task', taskRouter)
 
 app.use('/*', (request: Request, response: Response) => {
     logger.error('errorHandler', { handler: 'errorHandler' })
