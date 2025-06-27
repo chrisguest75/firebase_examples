@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "bbenoist.nix",
+        "ms-azuretools.vscode-docker",
+        "vivaxy.vscode-conventional-commits",
+        "ms-vscode-remote.remote-containers",
+        "jetmartin.bats",
+        "nefrob.vscode-just-syntax"
+    ]
+}
