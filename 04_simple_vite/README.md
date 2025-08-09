@@ -1,5 +1,9 @@
 # SIMPLE VITE
 
+TODO:
+
+* Deploy this to firebase.
+
 NOTES:
 
 * Hosts a simple backend and interacts with the frontend via API calls.
