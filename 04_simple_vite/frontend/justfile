@@ -1,0 +1,35 @@
+#!/usr/bin/env just --justfile
+# ^ A shebang isn't required, but allows a justfile to be executed
+#   like a script, with `./justfile test`, for example.
+
+set dotenv-load := true
+
+# default lists actions
+default:
+  @just -f {{ source_file() }} --list
+
+clean:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  rm -rf node_modules
+  rm -rf package-lock.json
+
+
+install:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm install
+
+build:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm run build
+
+run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm run {{ script }}
