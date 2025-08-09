@@ -3,6 +3,8 @@
 TODO:
 
 * Deploy this to firebase.
+* Add authentication.
+* Use firestore for keeping counter
 
 NOTES:
 
