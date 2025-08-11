@@ -21,3 +21,9 @@ frontend-start:
 
   cd ./frontend
   just run dev
+
+
+deploy:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+

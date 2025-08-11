@@ -2,7 +2,8 @@
 
 TODO:
 
-* Deploy this to firebase.
+* Deploy the frontend to firebase.
+* Ensure the backend is deployed to cloud run and the /api/count proxy works.
 * Add authentication.
 * Use firestore for keeping counter
 
@@ -19,3 +20,6 @@ Goto the [frontend](./frontend/README.md) directory for more information.
 Goto the [backend](./backend/README.md) directory for more information.
 
 ## Resources
+
+* https://cloud.google.com/functions/pricing-overview
+* https://cloud.google.com/functions/pricing-1stgen
