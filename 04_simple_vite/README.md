@@ -11,6 +11,14 @@ NOTES:
 
 * Hosts a simple backend and interacts with the frontend via API calls.
 
+## Install
+
+```sh
+nvm use
+
+just install
+```
+
 ## Frontend
 
 Goto the [frontend](./frontend/README.md) directory for more information.

@@ -8,6 +8,15 @@ set dotenv-load := true
 default:
   @just -f {{ source_file() }} --list
 
+install:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just install
+  cd ../frontend
+  just install
+  
 backend-start:
   #!/usr/bin/env bash
   set -eufo pipefail
