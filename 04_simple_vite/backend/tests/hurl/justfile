@@ -1,0 +1,66 @@
+#!/usr/bin/env just --justfile
+# ^ A shebang isn't required, but allows a justfile to be executed
+#   like a script, with `./justfile test`, for example.
+
+set dotenv-load := true
+
+
+# default lists actions
+default:
+  @just -f {{ source_file() }} --list
+
+# get-swagger endpoint
+get-swagger tenant="local":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  export HURL_VARS_FILE=hurl.{{ tenant }}.env
+
+  mkdir -p ./out || true 
+
+  if [[ ! -f $HURL_VARS_FILE ]]; then
+    echo "$HURL_VARS_FILE not found"
+  else
+    hurl --very-verbose --test get-swagger.hurl  --variables-file $HURL_VARS_FILE 
+  fi
+
+# get-ping endpoint
+get-ping tenant="local":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  export HURL_VARS_FILE=hurl.{{ tenant }}.env
+
+  mkdir -p ./out || true 
+
+  if [[ ! -f $HURL_VARS_FILE ]]; then
+    echo "$HURL_VARS_FILE not found"
+  else
+    hurl --very-verbose --test get-ping.hurl  --variables-file $HURL_VARS_FILE 
+  fi
+
+# get-count endpoint
+get-count tenant="local":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  export HURL_VARS_FILE=hurl.{{ tenant }}.env
+
+  mkdir -p ./out || true 
+
+  if [[ ! -f $HURL_VARS_FILE ]]; then
+    echo "$HURL_VARS_FILE not found"
+  else
+    hurl --very-verbose --test get-count.hurl  --variables-file $HURL_VARS_FILE 
+  fi
+
+# post-count endpoint
+post-count tenant="local":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  export HURL_VARS_FILE=hurl.{{ tenant }}.env
+
+  mkdir -p ./out || true 
+
+  if [[ ! -f $HURL_VARS_FILE ]]; then
+    echo "$HURL_VARS_FILE not found"
+  else
+    hurl --very-verbose --test post-count.hurl  --variables-file $HURL_VARS_FILE 
+  fi
