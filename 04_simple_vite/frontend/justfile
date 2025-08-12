@@ -89,15 +89,14 @@ create-repository:
   gcloud --project $PROJECT_ID artifacts repositories create artifacts --repository-format=docker --location=$REGION --description="Repository"
 
 # call bake-build-push first
-deploy:
+deploy: bake-build-push
   #!/usr/bin/env bash
   set -eufo pipefail
   
-
   CLOUDRUN_ENVVARS="COMMIT_ID=$(git rev-parse HEAD)"
   CLOUDRUN_ENVVARS="${CLOUDRUN_ENVVARS},DEPLOY_TIME=$(date '+%Y%m%d-%H%M%S')"
   echo ${CLOUDRUN_ENVVARS}
   export IMAGE_TAG=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifacts/$DOCKER_IMAGE_NAME:$DOCKER_IMAGE_TAG
 
-  gcloud --project $PROJECT_ID run deploy frontend --image $IMAGE_TAG --platform managed --region europe-west2 --allow-unauthenticated --set-env-vars "${CLOUDRUN_ENVVARS}"
+  gcloud --project $PROJECT_ID run deploy frontend --image $IMAGE_TAG --platform managed --region $REGION --allow-unauthenticated --set-env-vars "${CLOUDRUN_ENVVARS}"
 

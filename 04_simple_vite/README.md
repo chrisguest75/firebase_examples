@@ -11,6 +11,18 @@ NOTES:
 
 * Hosts a simple backend and interacts with the frontend via API calls.
 
+## Configure
+
+```sh
+gcloud auth login
+
+# docker login
+gcloud auth configure-docker europe-west2-docker.pkg.dev
+
+# copy and fill out
+cp .env.template .env
+```
+
 ## Install
 
 ```sh
