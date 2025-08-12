@@ -44,3 +44,5 @@ Goto the [backend](./backend/README.md) directory for more information.
 * https://cloud.google.com/functions/pricing-overview
 * https://cloud.google.com/functions/pricing-1stgen
 * https://vite.dev/guide/env-and-mode
+* https://datatracker.ietf.org/doc/html/rfc9110
+* https://tsoa-community.github.io/reference/index.html
