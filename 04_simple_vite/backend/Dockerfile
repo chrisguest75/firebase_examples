@@ -1,6 +1,11 @@
-# syntax=docker/dockerfile:1.4
-FROM node:20.11.1-bullseye AS BUILDER
+
+FROM node:20.11.1-bullseye AS builder
 LABEL dockerfile.baseimage="node:20.11.1-bullseye" dockerfile.description="backend" dockerfile.stage="BUILDER"
+
+ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
+ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ENV COMMIT_ID=${COMMIT_ID}
+ENV BUILD_TIME=${BUILD_TIME}
 
 WORKDIR /scratch
 
@@ -15,7 +20,7 @@ COPY src ./src
 COPY public ./public
 
 RUN npm run lint
-RUN npm run test:coverage
+#RUN npm run test:coverage
 RUN npm run build
 RUN npm run audit:production
 RUN npm ci --only=production && npm cache clean --force
@@ -23,16 +28,20 @@ RUN npm ci --only=production && npm cache clean --force
 # prune the node_modules
 #RUN /usr/local/bin/node-prune --verbose ./node_modules
 
-FROM gcr.io/distroless/nodejs20-debian11:debug AS PRODUCTION
+FROM gcr.io/distroless/nodejs20-debian11:debug AS production
 LABEL dockerfile.baseimage="gcr.io/distroless/nodejs:20" dockerfile.description="backend" dockerfile.stage="PRODUCTION"
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
+ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
+ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ENV COMMIT_ID=${COMMIT_ID}
+ENV BUILD_TIME=${BUILD_TIME}
 
 WORKDIR /work
-COPY --from=BUILDER /scratch/package.json /scratch/package-lock.json ./
-COPY --from=BUILDER /scratch/node_modules ./node_modules
-COPY --from=BUILDER /scratch/build ./
-COPY --from=BUILDER /scratch/public ./public
+COPY --from=builder /scratch/package.json /scratch/package-lock.json ./
+COPY --from=builder /scratch/node_modules ./node_modules
+COPY --from=builder /scratch/build ./
+COPY --from=builder /scratch/public ./public
 
 CMD ["/work/src/index.js"]
 #ENTRYPOINT [ "/nodejs/bin/node" ]

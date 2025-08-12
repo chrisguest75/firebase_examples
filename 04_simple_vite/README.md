@@ -2,7 +2,6 @@
 
 TODO:
 
-* Deploy the frontend to firebase.
 * Ensure the backend is deployed to cloud run and the /api/count proxy works.
 * Add authentication.
 * Use firestore for keeping counter
@@ -10,6 +9,7 @@ TODO:
 NOTES:
 
 * Hosts a simple backend and interacts with the frontend via API calls.
+* Adds a commitId and buildTime
 
 ## Configure
 

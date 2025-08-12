@@ -1,28 +1,20 @@
-import 'reflect-metadata';
-import { 
-  Controller, 
-  Get, 
-  Post, 
-  Put, 
-  Route, 
-  Body, 
-  SuccessResponse 
-} from 'tsoa';
+import 'reflect-metadata'
+import { Controller, Get, Post, Put, Route, Body, SuccessResponse } from 'tsoa'
 
 export interface CountResponse {
-  count: number;
+  count: number
 }
 
 export interface IncrementRequest {
-  increment: number;
+  increment: number
 }
 
 export interface SetValueRequest {
-  value: number;
+  value: number
 }
 
 // In-memory store for the count (in a real app, this would be a database)
-let currentCount = 0;
+let currentCount = 0
 
 @Route('api/count')
 export class CountController extends Controller {
@@ -32,7 +24,7 @@ export class CountController extends Controller {
   @Get()
   @SuccessResponse('200', 'Count retrieved successfully')
   public async getCount(): Promise<CountResponse> {
-    return { count: currentCount };
+    return { count: currentCount }
   }
 
   /**
@@ -41,8 +33,8 @@ export class CountController extends Controller {
   @Post()
   @SuccessResponse('200', 'Count incremented successfully')
   public async incrementCount(@Body() request: IncrementRequest): Promise<CountResponse> {
-    currentCount += request.increment;
-    return { count: currentCount };
+    currentCount += request.increment
+    return { count: currentCount }
   }
 
   /**
@@ -51,7 +43,7 @@ export class CountController extends Controller {
   @Put()
   @SuccessResponse('200', 'Count updated successfully')
   public async setCount(@Body() request: SetValueRequest): Promise<CountResponse> {
-    currentCount = request.value;
-    return { count: currentCount };
+    currentCount = request.value
+    return { count: currentCount }
   }
 }
