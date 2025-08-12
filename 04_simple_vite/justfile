@@ -36,3 +36,5 @@ deploy:
   #!/usr/bin/env bash
   set -eufo pipefail
 
+  cd ./frontend
+  just deploy

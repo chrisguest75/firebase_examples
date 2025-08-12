@@ -2,6 +2,11 @@ FROM node:22.11.0-bookworm AS builder
 
 LABEL dockerfile.baseimage="node:22.11.0-bookworm" dockerfile.description="frontend" dockerfile.stage="builder"
 
+ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
+ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ENV VITE_COMMIT_ID=${COMMIT_ID}
+ENV VITE_BUILD_TIME=${BUILD_TIME}
+
 WORKDIR /scratch
 
 #RUN curl -sf -o /bin/node-prune https://gobinaries.com/tj/node-prune && chmod +x /bin/node-prune && /bin/node-prune
@@ -26,6 +31,10 @@ RUN npm ci --only=production && npm cache clean --force
 FROM nginx:1.29.0 AS production
 LABEL dockerfile.baseimage="nginx:1.29.0" dockerfile.description="frontend" dockerfile.stage="production"
 
+ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
+ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ENV VITE_COMMIT_ID=${COMMIT_ID}
+ENV VITE_BUILD_TIME=${BUILD_TIME}
 WORKDIR /work
 COPY bootstrap.sh /work/bootstrap.sh
 
