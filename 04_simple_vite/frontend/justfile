@@ -77,6 +77,7 @@ bake-build-push filter="":
   set -xeufo pipefail
   mkdir -p out || true
 
+  export API_BASE_URL=${API_BASE_URL:-""}
   export IMAGE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
   export IMAGE_COMMIT_ID=$(git rev-parse HEAD)
   export IMAGE_TAG=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifacts/$FRONTEND_DOCKER_IMAGE_NAME:$FRONTEND_DOCKER_IMAGE_TAG

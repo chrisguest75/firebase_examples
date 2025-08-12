@@ -4,8 +4,10 @@ LABEL dockerfile.baseimage="node:22.11.0-bookworm" dockerfile.description="front
 
 ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
 ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ARG API_BASE_URL=${API_BASE_URL:-""}
 ENV VITE_COMMIT_ID=${COMMIT_ID}
 ENV VITE_BUILD_TIME=${BUILD_TIME}
+ENV VITE_API_BASE_URL=${API_BASE_URL}
 
 WORKDIR /scratch
 
@@ -33,8 +35,10 @@ LABEL dockerfile.baseimage="nginx:1.29.0" dockerfile.description="frontend" dock
 
 ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
 ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ARG API_BASE_URL=${API_BASE_URL:-""}
 ENV VITE_COMMIT_ID=${COMMIT_ID}
 ENV VITE_BUILD_TIME=${BUILD_TIME}
+ENV VITE_API_BASE_URL=${API_BASE_URL}
 WORKDIR /work
 COPY bootstrap.sh /work/bootstrap.sh
 
