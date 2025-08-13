@@ -6,33 +6,35 @@ import pino from 'express-pino-logger'
 import bodyParser from 'body-parser'
 import swaggerUi from 'swagger-ui-express'
 import { RegisterRoutes } from './routes/routes.js'
-import cors, { CorsOptions } from 'cors';
+import cors, { CorsOptions } from 'cors'
+import { backendConfig } from './config/config.js'
 
 const port = process.env.PORT || 8000
 
 export const app = express()
 
-// TODO: This needs to be configured.  
-const allowedOrigins: string[] = [
-  'http://localhost:3000',
-];
+// Configure the CORS middleware
+const allowedOrigins: string[] = ['http://localhost:3000']
+if (backendConfig.frontendUrl) {
+  allowedOrigins.push(backendConfig.frontendUrl)
+}
+logger.info({ allowedOrigins })
 const corsOptions: CorsOptions = {
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true); // allow non-browser tools
-    cb(null, allowedOrigins.includes(origin));
+    if (!origin) return cb(null, true) // allow non-browser tools
+    cb(null, allowedOrigins.includes(origin))
   },
   credentials: true,
-};
+}
 
 app.use((req, _res, next) => {
   // quick debug to verify what Origin you’re getting
-  console.log('Origin:', req.headers.origin);
-  next();
-});
+  logger.info({ origin: req.headers.origin })
+  next()
+})
 
-app.use(cors(corsOptions));
-app.options('*', cors(corsOptions)); // handle preflight globally
-
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions)) // handle preflight globally
 
 // Use body parser to read sent json payloads
 app.use(

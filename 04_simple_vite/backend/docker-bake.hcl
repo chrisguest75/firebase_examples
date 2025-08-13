@@ -11,7 +11,9 @@ variable "IMAGE_COMMIT_ID" {
 variable "IMAGE_BUILD_TIME" {
   default = "UNKNOWN"
 }
-
+variable "FRONTEND_URL" {
+  default = ""
+}
 #***********************************************
 # Simple Vite images
 #***********************************************
@@ -21,6 +23,7 @@ target "image-amd64" {
     VERSION = "0.0.0+unknown"
     COMMIT_ID = "${IMAGE_COMMIT_ID}"
     BUILD_TIME = "${IMAGE_BUILD_TIME}"      
+    FRONTEND_URL = "${FRONTEND_URL}"  
   }
   context = "."
   platforms = ["linux/amd64"]
@@ -33,7 +36,8 @@ target "image-arm64" {
   args = {
     VERSION = "0.0.0+unknown"
     COMMIT_ID = "${IMAGE_COMMIT_ID}"
-    BUILD_TIME = "${IMAGE_BUILD_TIME}"        
+    BUILD_TIME = "${IMAGE_BUILD_TIME}"   
+    FRONTEND_URL = "${FRONTEND_URL}"       
   }
   context = "."
   platforms = ["linux/arm64"]
@@ -47,6 +51,7 @@ target "push-cloudrun-image-amd64" {
     VERSION = "0.0.0+unknown"
     COMMIT_ID = "${IMAGE_COMMIT_ID}"
     BUILD_TIME = "${IMAGE_BUILD_TIME}"      
+    FRONTEND_URL = "${FRONTEND_URL}"  
   }
   context = "."
   platforms = ["linux/amd64"]
