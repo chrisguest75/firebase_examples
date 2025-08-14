@@ -1,5 +1,6 @@
 import 'reflect-metadata'
 import { Controller, Get, Post, Put, Route, Body, SuccessResponse } from 'tsoa'
+import { backendConfig } from '../config/config.js'
 
 export interface CountResponse {
   count: number
@@ -24,9 +25,9 @@ export class CountController extends Controller {
   @Get()
   @SuccessResponse('200', 'Count retrieved successfully')
   public async getCount(): Promise<CountResponse> {
-    this.setHeader('My-Commit-Id', process.env.COMMIT_ID || 'unknown')
-    this.setHeader('My-Build-Time', process.env.BUILD_TIME || 'unknown')
-    this.setHeader('My-Deploy-Time', process.env.DEPLOY_TIME || 'unknown')
+    this.setHeader('My-Commit-Id', backendConfig.commitId)
+    this.setHeader('My-Build-Time', backendConfig.buildTime)
+    this.setHeader('My-Deploy-Time', backendConfig.deployTime)
 
     return { count: currentCount }
   }
@@ -37,9 +38,9 @@ export class CountController extends Controller {
   @Post()
   @SuccessResponse('200', 'Count incremented successfully')
   public async incrementCount(@Body() request: IncrementRequest): Promise<CountResponse> {
-    this.setHeader('My-Commit-Id', process.env.COMMIT_ID || 'unknown')
-    this.setHeader('My-Build-Time', process.env.BUILD_TIME || 'unknown')
-    this.setHeader('My-Deploy-Time', process.env.DEPLOY_TIME || 'unknown')
+    this.setHeader('My-Commit-Id', backendConfig.commitId)
+    this.setHeader('My-Build-Time', backendConfig.buildTime)
+    this.setHeader('My-Deploy-Time', backendConfig.deployTime)
 
     currentCount += request.increment
     return { count: currentCount }
@@ -51,9 +52,9 @@ export class CountController extends Controller {
   @Put()
   @SuccessResponse('200', 'Count updated successfully')
   public async setCount(@Body() request: SetValueRequest): Promise<CountResponse> {
-    this.setHeader('My-Commit-Id', process.env.COMMIT_ID || 'unknown')
-    this.setHeader('My-Build-Time', process.env.BUILD_TIME || 'unknown')
-    this.setHeader('My-Deploy-Time', process.env.DEPLOY_TIME || 'unknown')
+    this.setHeader('My-Commit-Id', backendConfig.commitId)
+    this.setHeader('My-Build-Time', backendConfig.buildTime)
+    this.setHeader('My-Deploy-Time', backendConfig.deployTime)
 
     currentCount = request.value
     return { count: currentCount }

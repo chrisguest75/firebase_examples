@@ -2,15 +2,14 @@
 GET {{ API_URL }}/api/count
 Accept: application/json
 Content-Type: application/json
-Origin: {{ FRONTEND_URL }}
+Origin: https://evil.example
 
 [Options]
-output: ./out/get-count.json
+output: ./out/get-count-cors.json
 
 HTTP 200
 
-
 [Asserts]
 header "Content-Type" == "application/json; charset=utf-8"
-header "Access-Control-Allow-Origin" == {{ FRONTEND_URL }}
+header "Access-Control-Allow-Origin" not exists
 jsonpath "$" isCollection

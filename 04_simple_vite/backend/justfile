@@ -66,6 +66,10 @@ bake-build filter="":
   #!/usr/bin/env bash
   set -xeufo pipefail
   mkdir -p out || true
+  export IMAGE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
+  export IMAGE_COMMIT_ID=$(git rev-parse HEAD)
+  export FRONTEND_URL=${FRONTEND_URL}
+
   export IMAGE_NAME=${BACKEND_DOCKER_IMAGE_NAME}
   export IMAGE_TAG=${BACKEND_DOCKER_IMAGE_TAG}
   docker buildx bake --progress=plain -f ./docker-bake.hcl --no-cache --metadata-file ./out/bake-metadata.json {{ filter }}
@@ -78,6 +82,7 @@ bake-build-push filter="":
 
   export IMAGE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
   export IMAGE_COMMIT_ID=$(git rev-parse HEAD)
+  export FRONTEND_URL=${FRONTEND_URL}
   export IMAGE_TAG=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifacts/$BACKEND_DOCKER_IMAGE_NAME:$BACKEND_DOCKER_IMAGE_TAG
   docker buildx bake --progress=plain -f ./docker-bake.hcl --metadata-file ./out/bake-metadata.json --push push-cloudrun-image-amd64
 

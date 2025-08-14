@@ -1,11 +1,6 @@
 
-FROM node:20.11.1-bullseye AS builder
-LABEL dockerfile.baseimage="node:20.11.1-bullseye" dockerfile.description="backend" dockerfile.stage="BUILDER"
-
-ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
-ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
-ENV COMMIT_ID=${COMMIT_ID}
-ENV BUILD_TIME=${BUILD_TIME}
+FROM node:22.11.0-bookworm AS builder
+LABEL dockerfile.baseimage="node:22.11.0-bookworm" dockerfile.description="backend" dockerfile.stage="BUILDER"
 
 WORKDIR /scratch
 
@@ -20,6 +15,14 @@ COPY src ./src
 COPY public ./public
 
 RUN npm run lint
+
+ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
+ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ARG FRONTEND_URL=${FRONTEND_URL:-UNKNOWN}
+ENV COMMIT_ID=${COMMIT_ID}
+ENV BUILD_TIME=${BUILD_TIME}
+ENV FRONTEND_URL=${FRONTEND_URL}
+
 #RUN npm run test:coverage
 RUN npm run build
 RUN npm run audit:production
@@ -28,14 +31,16 @@ RUN npm ci --only=production && npm cache clean --force
 # prune the node_modules
 #RUN /usr/local/bin/node-prune --verbose ./node_modules
 
-FROM gcr.io/distroless/nodejs20-debian11:debug AS production
+FROM gcr.io/distroless/nodejs22-debian12:debug AS production
 LABEL dockerfile.baseimage="gcr.io/distroless/nodejs:20" dockerfile.description="backend" dockerfile.stage="PRODUCTION"
 
 ENV NODE_ENV=production
 ARG COMMIT_ID=${COMMIT_ID:-UNKNOWN}
 ARG BUILD_TIME=${BUILD_TIME:-UNKNOWN}
+ARG FRONTEND_URL=${FRONTEND_URL:-UNKNOWN}
 ENV COMMIT_ID=${COMMIT_ID}
 ENV BUILD_TIME=${BUILD_TIME}
+ENV FRONTEND_URL=${FRONTEND_URL}
 
 WORKDIR /work
 COPY --from=builder /scratch/package.json /scratch/package-lock.json ./
@@ -45,4 +50,4 @@ COPY --from=builder /scratch/public ./public
 
 CMD ["/work/src/index.js"]
 #ENTRYPOINT [ "/nodejs/bin/node" ]
-#CMD ["--no-warnings", "--experimental-specifier-resolution=node", "/work/src/index.js"]
+#CMD ["--no-warnings", "--experimental-specifier-resolution=node", "--loader", "ts-node/esm", "/work/src/index.js"]

@@ -6,10 +6,35 @@ import pino from 'express-pino-logger'
 import bodyParser from 'body-parser'
 import swaggerUi from 'swagger-ui-express'
 import { RegisterRoutes } from './routes/routes.js'
+import cors, { CorsOptions } from 'cors'
+import { backendConfig } from './config/config.js'
 
 const port = process.env.PORT || 8000
 
 export const app = express()
+
+// Configure the CORS middleware
+const allowedOrigins: string[] = ['http://localhost:3000']
+if (backendConfig.frontendUrl) {
+  allowedOrigins.push(backendConfig.frontendUrl)
+}
+logger.info({ allowedOrigins })
+const corsOptions: CorsOptions = {
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true) // allow non-browser tools
+    cb(null, allowedOrigins.includes(origin))
+  },
+  credentials: true,
+}
+
+app.use((req, _res, next) => {
+  // quick debug to verify what Origin you’re getting
+  logger.info({ origin: req.headers.origin })
+  next()
+})
+
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions)) // handle preflight globally
 
 // Use body parser to read sent json payloads
 app.use(
@@ -95,8 +120,8 @@ dotenv.config()
 logger.info(`Pino:${logger.version}`)
 const args: minimist.ParsedArgs = minimist(process.argv.slice(2), {
   string: ['ssmName'],
-  boolean: ['verbose', 'ssmRead', 'ssmWrite', 'throwError'],
-  default: { verbose: true, throwError: false, ssmRead: false, ssmWrite: false, ssmName: 'testssmdocument' },
+  boolean: ['verbose', 'throwError'],
+  default: { verbose: true, throwError: false },
 })
 
 try {

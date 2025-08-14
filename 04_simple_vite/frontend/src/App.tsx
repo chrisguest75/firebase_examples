@@ -13,9 +13,11 @@ function App() {
     fetchCount()
   }, [])
 
+  const apiBaseUrl = frontendConfig.apiBaseUrl || ''
+
   const fetchCount = async () => {
     try {
-      const response = await fetch('/api/count')
+      const response = await fetch(`${apiBaseUrl}/api/count`)
       const data = await response.json()
       setCount(data.count)
     } catch (error) {
@@ -26,7 +28,7 @@ function App() {
   const incrementCount = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/count', {
+      const response = await fetch(`${apiBaseUrl}/api/count`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -45,7 +47,7 @@ function App() {
   const resetCount = async () => {
     setLoading(true)
     try {
-      const response = await fetch('/api/count', {
+      const response = await fetch(`${apiBaseUrl}/api/count`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

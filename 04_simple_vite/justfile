@@ -24,6 +24,13 @@ backend-start:
   cd ./backend
   just run start:dev
 
+backend-run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just {{ script }}
+
 frontend-start:
   #!/usr/bin/env bash
   set -eufo pipefail
@@ -31,6 +38,12 @@ frontend-start:
   cd ./frontend
   just run dev
 
+frontend-run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just {{ script }}
 
 deploy:
   #!/usr/bin/env bash
