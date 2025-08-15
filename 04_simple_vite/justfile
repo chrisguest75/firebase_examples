@@ -56,7 +56,7 @@ deploy:
   just deploy
 
 
-deploy-firebase:
+deploy-firebase channel="":
   #!/usr/bin/env bash
   set -eufo pipefail
   
@@ -72,7 +72,13 @@ deploy-firebase:
   export VITE_COMMIT_ID=$(git rev-parse HEAD)
   export VITE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
   export VITE_API_BASE_URL=${API_BASE_URL}
-  firebase --project $PROJECT_ID deploy --only hosting
+  export VITE_CHANNEL="{{ channel }}"
+  # deploy a channel
+  if [[ -z "${VITE_CHANNEL}" ]]; then
+    firebase --project $PROJECT_ID deploy --only hosting
+  else
+    firebase --project $PROJECT_ID hosting:channel:deploy ${VITE_CHANNEL}
+  fi
 
 undeploy-firebase:
   #!/usr/bin/env bash

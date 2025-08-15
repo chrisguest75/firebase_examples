@@ -2,7 +2,6 @@
 
 TODO:
 
-* Ensure the backend is deployed to cloud run and the /api/count proxy works.
 * Add authentication.
 * Use firestore for keeping counter
 
@@ -10,6 +9,9 @@ NOTES:
 
 * Hosts a simple backend and interacts with the frontend via API calls.
 * Adds a commitId and buildTime
+* Can deploy to firebase channels
+* The backend supports CORS.
+* Use firebase hosting or cloudrun
 
 ## Configure
 
@@ -28,7 +30,8 @@ cp .env.template .env
 ```sh
 nvm use
 
-just install
+# deploy into a channel
+just deploy-firebase my-channel
 ```
 
 ## Frontend
