@@ -1,18 +1,20 @@
 import { logger } from './logger.js'
-import * as dotenv from 'dotenv'
-import minimist from 'minimist'
 import express from 'express'
-import pino from 'express-pino-logger'
 import bodyParser from 'body-parser'
+import pino from 'express-pino-logger'
 import swaggerUi from 'swagger-ui-express'
 import { RegisterRoutes } from './routes/routes.js'
 import cors, { CorsOptions } from 'cors'
+import 'reflect-metadata'
+import * as functions from 'firebase-functions'
 import { backendConfig } from './config/config.js'
+import swaggerDocument from '../public/swagger.json' assert { type: "json" };
 
-const port = process.env.PORT || 8000
 
-export const app = express()
+logger.info(`Pino:${logger.version}`)
+const app = express()
 
+// Middleware
 // Configure the CORS middleware
 const allowedOrigins: string[] = ['http://localhost:3000']
 if (backendConfig.frontendUrl) {
@@ -36,99 +38,31 @@ app.use((req, _res, next) => {
 app.use(cors(corsOptions))
 app.options('*', cors(corsOptions)) // handle preflight globally
 
-// Use body parser to read sent json payloads
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  }),
-)
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
-app.use(express.static('public'))
-app.use(pino())
 
-app.use(
-  '/docs',
-  swaggerUi.serve,
-  swaggerUi.setup(undefined, {
-    swaggerUrl: '/swagger.json',
-    swaggerOptions: {
-      validatorUrl: null,
-    },
-  }),
-)
-
+// Register TSOA routes
 RegisterRoutes(app)
 
-/*
-Entrypoint
-*/
-export async function main(args: minimist.ParsedArgs) {
-  logger.info({ node_env: process.env.NODE_ENV })
-  logger.info({ 'node.version': process.version })
-
-  logger.trace('TRACE - level message')
-  logger.debug('DEBUG - level message')
-  logger.info('INFO - level message')
-  logger.warn('WARN - level message')
-  logger.error('ERROR - level message')
-  logger.fatal('FATAL - level message')
-
-  logger.info(args)
-
-  console.log('Starting server...')
-  app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
-}
-
-function shutDown(signal: string) {
-  return new Promise(() => {
-    logger.info(`shutDown - ${signal}`)
-    process.exit(0)
-  })
-}
-
-process.on('SIGTERM', () => {
-  shutDown('SIGTERM')
-})
-process.on('SIGINT', () => {
-  shutDown('SIGINT')
+app.use('/docs', swaggerUi.serve, (_req: express.Request, res: express.Response) => {
+  res.send(swaggerUi.generateHTML(swaggerDocument))
 })
 
-process.on('exit', async () => {
-  logger.warn('exit signal received')
-  process.exit(1)
+// Error handling middleware
+app.use((err: Error, req: express.Request, res: express.Response /*, next: express.NextFunction*/) => {
+  console.error(err.stack)
+  res.status(500).json({ message: 'Something went wrong!' })
 })
 
-process.on('uncaughtException', async (error: Error) => {
-  logger.error(error)
-  // for nice printing
-  console.log(error)
-  process.exit(1)
-})
+// simple_vite_backend is the name of the function
+// firebase --project $PROJECT_ID deploy --only functions:simple_vite_backend
+export const simple_vite_backend = functions.https.onRequest(
+  {
+    minInstances: 0,
+    maxInstances: 1,
+    region: process.env.REGION || 'europe-west2',
+  },
+  app,
+)
 
-process.on('unhandledRejection', async (reason, promise) => {
-  logger.error({
-    promise: promise,
-    reason: reason,
-    msg: 'Unhandled Rejection',
-  })
-  console.log(reason)
-  process.exit(1)
-})
-
-// load config
-dotenv.config()
-logger.info(`Pino:${logger.version}`)
-const args: minimist.ParsedArgs = minimist(process.argv.slice(2), {
-  string: ['ssmName'],
-  boolean: ['verbose', 'throwError'],
-  default: { verbose: true, throwError: false },
-})
-
-try {
-  await main(args)
-  // if we exit, the process will kill the listener
-  //process.exit(0)
-} catch (error) {
-  logger.error(error)
-  process.exit(1)
-}
+export default simple_vite_backend

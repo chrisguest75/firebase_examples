@@ -1,5 +1,5 @@
-# post-count.hurl
-POST {{ API_URL }}/api/count
+# put-count.hurl
+PUT {{ API_URL }}/api/count
 Accept: application/json
 Content-Type: application/json
 Origin: {{ FRONTEND_URL }}
@@ -8,7 +8,7 @@ Origin: {{ FRONTEND_URL }}
 output: ./out/post-count.json
 
 {
-  "increment": 1
+  "value": 3
 }
 
 HTTP 200
@@ -16,4 +16,4 @@ HTTP 200
 [Asserts]
 header "Content-Type" == "application/json; charset=utf-8"
 jsonpath "$.count" exists
-
+jsonpath "$.count" == 3

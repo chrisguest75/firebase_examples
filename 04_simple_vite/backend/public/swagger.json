@@ -75,7 +75,7 @@
 				"operationId": "GetMessage",
 				"responses": {
 					"200": {
-						"description": "Ok",
+						"description": "Ping response",
 						"content": {
 							"application/json": {
 								"schema": {
