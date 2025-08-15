@@ -12,6 +12,7 @@ NOTES:
 * Can deploy to firebase channels
 * The backend supports CORS.
 * Use firebase hosting or cloudrun
+* When configuring CORS urls make sure there is no trailing slash
 
 ## Configure
 

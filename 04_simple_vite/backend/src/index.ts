@@ -12,7 +12,10 @@ import swaggerDocument from '../public/swagger.json' assert { type: "json" };
 
 
 logger.info(`Pino:${logger.version}`)
+logger.info({ backendConfig })
 const app = express()
+
+app.use(pino())
 
 // Middleware
 // Configure the CORS middleware
