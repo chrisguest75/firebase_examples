@@ -1,0 +1,49 @@
+{
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.2.0",
+    "firebase": "^9.14.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "rimraf": "^3.0.2",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "audit": "better-npm-audit audit",
+    "clean": "rimraf build",
+    "rebuild": "npm run clean && npm run build",
+    "clean:build": "npm run rebuild",
+    "docker:build": "docker build --target PRODUCTION -f Dockerfile --label \"org.opencontainers.image.created=$(date '+%Y-%m-%dT%H:%M:%SZ')\" --label \"org.opencontainers.image.version=${githubsha}\" --label \"org.opencontainers.image.url=$(git remote get-url origin)\" -t frontend .",
+    "docker:run": "npm run docker:build && docker run -p 3000:80 --rm -it --name frontend frontend",
+    "docker:rebuild": "docker build --no-cache --target PRODUCTION -f Dockerfile --label \"org.opencontainers.image.created=$(date '+%Y-%m-%dT%H:%M:%SZ')\" --label \"org.opencontainers.image.version=${githubsha}\" --label \"org.opencontainers.image.url=$(git remote get-url origin)\" -t frontend .",
+    "docker:stop": "docker stop frontend"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

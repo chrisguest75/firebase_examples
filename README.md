@@ -38,6 +38,11 @@ firebase --version
 Demonstrates a simple static website on `firebase`  
 [README.md](./01_static_website/README.md)  
 
+## 02 - auth
+
+Demonstrate how to create a simple firebase application with authentication.  
+[README.md](./02_auth/README.md)  
+
 ## Resources
 
 * Firebase channel [here](https://www.youtube.com/firebase)  
