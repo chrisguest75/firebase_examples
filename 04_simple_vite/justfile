@@ -65,8 +65,13 @@ deploy-firebase-functions:
   #firebase --project $PROJECT_ID functions:config:set build.pipeline=local
 
   cd ./backend
-  firebase --project $PROJECT_ID deploy --only functions:simple_vite_backend 
-  
+  echo "COMMIT_ID=$(git rev-parse HEAD)" > ./.env
+  echo "BUILD_TIME=$(date '+%Y%m%d-%H%M%S')" >> ./.env
+  echo "DEPLOY_TIME=$(date '+%Y%m%d-%H%M%S')" >> ./.env
+  echo "FRONTEND_URL=${HOSTING_FRONTEND_URL}" >> ./.env
+
+  firebase --project $PROJECT_ID deploy --only functions:simple_vite_backend
+
 
 deploy-firebase-hosting channel="":
   #!/usr/bin/env bash
@@ -77,7 +82,7 @@ deploy-firebase-hosting channel="":
 
   export VITE_COMMIT_ID=$(git rev-parse HEAD)
   export VITE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
-  export VITE_API_BASE_URL=${API_BASE_URL}
+  export VITE_API_BASE_URL=${HOSTING_API_BASE_URL}
   export VITE_CHANNEL="{{ channel }}"
   # deploy a channel
   if [[ -z "${VITE_CHANNEL}" ]]; then
@@ -86,11 +91,12 @@ deploy-firebase-hosting channel="":
     firebase --project $PROJECT_ID hosting:channel:deploy ${VITE_CHANNEL}
   fi
 
-undeploy-firebase:
+deploy-firebase:
   #!/usr/bin/env bash
   set -eufo pipefail
   
-
+  just deploy-firebase-functions
+  just deploy-firebase-hosting
   #firebase experiments:enable webframeworks
-  firebase --project $PROJECT_ID hosting:disable --site $PROJECT_ID
+  #firebase --project $PROJECT_ID hosting:disable --site $PROJECT_ID
 
