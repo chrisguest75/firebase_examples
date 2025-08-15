@@ -1,0 +1,106 @@
+#!/usr/bin/env just --justfile
+# ^ A shebang isn't required, but allows a justfile to be executed
+#   like a script, with `./justfile test`, for example.
+
+set dotenv-load := true
+
+# default lists actions
+default:
+  @just -f justfile --list
+
+#export PROJECT_ID:="${PROJECT_ID}"
+#export DOCKER_IMAGE_NAME:="${DOCKER_IMAGE_NAME}"
+#export DOCKER_IMAGE_TAG:="${DOCKER_IMAGE_TAG}"
+#export REGION:="${REGION}"
+
+clean:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  rm -rf node_modules
+  rm -rf package-lock.json
+
+
+install:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm install
+
+build:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm run build
+
+run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  npm run {{ script }}
+
+details:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  firebase --project $PROJECT_ID functions:list --json
+  firebase --project $PROJECT_ID functions:config:get --json
+
+logs:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  firebase --project $PROJECT_ID functions:log --only nextjs
+
+docker-run-amd64 image="${BACKEND_DOCKER_IMAGE_NAME}_amd64:latest":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  docker run -it --platform linux/amd64 -p 8080:8080 --rm {{ image }}
+
+docker-run-arm64 image="${BACKEND_DOCKER_IMAGE_NAME}_arm64:latest":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  docker run -it --platform linux/arm64 -p 8080:8080 --rm {{ image }}
+
+bake-build filter="":
+  #!/usr/bin/env bash
+  set -xeufo pipefail
+  mkdir -p out || true
+  export IMAGE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
+  export IMAGE_COMMIT_ID=$(git rev-parse HEAD)
+  export FRONTEND_URL=${FRONTEND_URL}
+
+  export IMAGE_NAME=${BACKEND_DOCKER_IMAGE_NAME}
+  export IMAGE_TAG=${BACKEND_DOCKER_IMAGE_TAG}
+  docker buildx bake --progress=plain -f ./docker-bake.hcl --no-cache --metadata-file ./out/bake-metadata.json {{ filter }}
+
+# call create-repository first
+bake-build-push filter="":
+  #!/usr/bin/env bash
+  set -xeufo pipefail
+  mkdir -p out || true
+
+  export IMAGE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
+  export IMAGE_COMMIT_ID=$(git rev-parse HEAD)
+  export FRONTEND_URL=${FRONTEND_URL}
+  export IMAGE_TAG=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifacts/$BACKEND_DOCKER_IMAGE_NAME:$BACKEND_DOCKER_IMAGE_TAG
+  docker buildx bake --progress=plain -f ./docker-bake.hcl --metadata-file ./out/bake-metadata.json --push push-cloudrun-image-amd64
+
+create-repository:
+  #!/usr/bin/env bash
+  set -xeufo pipefail
+
+  gcloud --project $PROJECT_ID artifacts repositories create artifacts --repository-format=docker --location=$REGION --description="Repository"
+
+# call bake-build-push first
+deploy: bake-build-push
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  
+  CLOUDRUN_ENVVARS="COMMIT_ID=$(git rev-parse HEAD)"
+  CLOUDRUN_ENVVARS="${CLOUDRUN_ENVVARS},DEPLOY_TIME=$(date '+%Y%m%d-%H%M%S')"
+  echo ${CLOUDRUN_ENVVARS}
+  export IMAGE_TAG=${REGION}-docker.pkg.dev/${PROJECT_ID}/artifacts/$BACKEND_DOCKER_IMAGE_NAME:$BACKEND_DOCKER_IMAGE_TAG
+
+  gcloud --project $PROJECT_ID run deploy backend --image $IMAGE_TAG --platform managed --region $REGION --allow-unauthenticated --set-env-vars "${CLOUDRUN_ENVVARS}"
+

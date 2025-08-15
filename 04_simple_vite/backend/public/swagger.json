@@ -1,0 +1,174 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"PingResponse": {
+				"properties": {
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CountResponse": {
+				"properties": {
+					"count": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"count"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"IncrementRequest": {
+				"properties": {
+					"increment": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"increment"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SetValueRequest": {
+				"properties": {
+					"value": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"value"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {}
+	},
+	"info": {
+		"title": "backend",
+		"version": "1.0.0",
+		"license": {
+			"name": "ISC"
+		},
+		"contact": {}
+	},
+	"paths": {
+		"/api/ping": {
+			"get": {
+				"operationId": "GetMessage",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/PingResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/api/count": {
+			"get": {
+				"operationId": "GetCount",
+				"responses": {
+					"200": {
+						"description": "Count retrieved successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CountResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Get the current count value",
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "IncrementCount",
+				"responses": {
+					"200": {
+						"description": "Count incremented successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CountResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Increment the count by a specified amount",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/IncrementRequest"
+							}
+						}
+					}
+				}
+			},
+			"put": {
+				"operationId": "SetCount",
+				"responses": {
+					"200": {
+						"description": "Count updated successfully",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CountResponse"
+								}
+							}
+						}
+					}
+				},
+				"description": "Set the count to a specific value",
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SetValueRequest"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

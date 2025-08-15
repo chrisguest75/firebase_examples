@@ -1,0 +1,90 @@
+#!/usr/bin/env just --justfile
+# ^ A shebang isn't required, but allows a justfile to be executed
+#   like a script, with `./justfile test`, for example.
+
+set dotenv-load := true
+#export PROJECT_ID:="xxx"
+
+# default lists actions
+default:
+  @just -f {{ source_file() }} --list
+
+install:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just install
+  cd ../frontend
+  just install
+  
+backend-start:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just run start:dev
+
+backend-run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just {{ script }}
+
+frontend-start:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./frontend
+  just run dev
+
+frontend-run script="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just {{ script }}
+
+deploy:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  cd ./backend
+  just deploy
+  cd ../frontend
+  just deploy
+
+
+deploy-firebase channel="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  
+  #firebase --project $PROJECT_ID functions:config:set build.commitid=$(git rev-parse HEAD)
+  #firebase --project $PROJECT_ID functions:config:set build.tenant=production
+  #firebase --project $PROJECT_ID functions:config:set build.pipeline=local
+
+  #cd ./backend
+  #firebase --project $PROJECT_ID deploy --only functions:api 
+  
+  #cd ..
+  #firebase experiments:enable webframeworks
+  export VITE_COMMIT_ID=$(git rev-parse HEAD)
+  export VITE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
+  export VITE_API_BASE_URL=${API_BASE_URL}
+  export VITE_CHANNEL="{{ channel }}"
+  # deploy a channel
+  if [[ -z "${VITE_CHANNEL}" ]]; then
+    firebase --project $PROJECT_ID deploy --only hosting
+  else
+    firebase --project $PROJECT_ID hosting:channel:deploy ${VITE_CHANNEL}
+  fi
+
+undeploy-firebase:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  
+
+  #firebase experiments:enable webframeworks
+  firebase --project $PROJECT_ID hosting:disable --site $PROJECT_ID
+
