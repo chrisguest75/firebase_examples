@@ -56,7 +56,7 @@ deploy:
   just deploy
 
 
-deploy-firebase channel="":
+deploy-firebase-functions:
   #!/usr/bin/env bash
   set -eufo pipefail
   
@@ -64,11 +64,17 @@ deploy-firebase channel="":
   #firebase --project $PROJECT_ID functions:config:set build.tenant=production
   #firebase --project $PROJECT_ID functions:config:set build.pipeline=local
 
-  #cd ./backend
-  #firebase --project $PROJECT_ID deploy --only functions:api 
+  cd ./backend
+  firebase --project $PROJECT_ID deploy --only functions:simple_vite_backend 
   
-  #cd ..
+
+deploy-firebase-hosting channel="":
+  #!/usr/bin/env bash
+  set -eufo pipefail
+
+  # requires webframeworks  
   #firebase experiments:enable webframeworks
+
   export VITE_COMMIT_ID=$(git rev-parse HEAD)
   export VITE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
   export VITE_API_BASE_URL=${API_BASE_URL}

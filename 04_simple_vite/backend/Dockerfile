@@ -10,7 +10,7 @@ COPY package.json package-lock.json ./
 # https://docs.npmjs.com/cli/v7/commands/npm-ci
 RUN npm ci
 
-COPY tsconfig.json .prettierrc jest.config.cjs .eslintrc ./
+COPY tsconfig.json .prettierrc jest.config.cjs .eslintrc tsoa.json ./
 COPY src ./src
 COPY public ./public
 
@@ -48,6 +48,6 @@ COPY --from=builder /scratch/node_modules ./node_modules
 COPY --from=builder /scratch/build ./
 COPY --from=builder /scratch/public ./public
 
-CMD ["/work/src/index.js"]
+CMD ["/work/src/dockerIndex.js"]
 #ENTRYPOINT [ "/nodejs/bin/node" ]
 #CMD ["--no-warnings", "--experimental-specifier-resolution=node", "--loader", "ts-node/esm", "/work/src/index.js"]

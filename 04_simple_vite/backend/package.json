@@ -3,14 +3,17 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
-  "main": "index.js",
+  "main": "build/src/index.js",
+  "engines": {
+    "node": "22"
+  },
   "scripts": {
     "tsc": "tsc",
     "audit": "better-npm-audit audit",
     "audit:production": "better-npm-audit audit --production",
-    "swagger": "tsoa spec && tsoa routes",
+    "build": "npm run build:tsoa && tsc",
+    "build:tsoa": "tsoa spec-and-routes",
     "clean": "rimraf build",
-    "build": "tsc",
     "build:run": "tsc && node --no-warnings --experimental-specifier-resolution=node ./build/src/index.js",
     "run": "node --no-warnings --experimental-specifier-resolution=node ./build/src/index.js",
     "rebuild": "npm run clean && npm run build",
@@ -78,6 +81,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.1",
     "express-pino-logger": "^7.0.0",
+    "firebase-functions": "^6.4.0",
     "minimist": "^1.2.8",
     "pino": "^8.19.0",
     "swagger-ui-express": "^5.0.0",

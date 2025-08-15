@@ -42,6 +42,23 @@ Goto the [frontend](./frontend/README.md) directory for more information.
 
 Goto the [backend](./backend/README.md) directory for more information.
 
+## Testing
+
+```sh
+# fill in the .env files
+API_BASE_URL="https://xxxx.europe-west2.run.app"
+FRONTEND_URL="https://xxxx.europe-west2.run.app"
+
+# deploy using cloudrun
+just deploy
+
+cd backend/tests/hurl
+
+just get-ping production
+just get-count production
+just get-count-cors-fail production
+```
+
 ## Resources
 
 * https://cloud.google.com/functions/pricing-overview
