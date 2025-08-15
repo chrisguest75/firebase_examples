@@ -46,3 +46,4 @@ Goto the [backend](./backend/README.md) directory for more information.
 * https://vite.dev/guide/env-and-mode
 * https://datatracker.ietf.org/doc/html/rfc9110
 * https://tsoa-community.github.io/reference/index.html
+* The firebase.json file [here](https://firebase.google.com/docs/cli#the_firebasejson_file)

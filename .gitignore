@@ -1,2 +1,4 @@
-firebase-debug.log
+.firebase
 .env
+firebase-debug.log
+pglite-debug.log

@@ -3,6 +3,7 @@
 #   like a script, with `./justfile test`, for example.
 
 set dotenv-load := true
+#export PROJECT_ID:="xxx"
 
 # default lists actions
 default:
@@ -53,3 +54,31 @@ deploy:
   just deploy
   cd ../frontend
   just deploy
+
+
+deploy-firebase:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  
+  #firebase --project $PROJECT_ID functions:config:set build.commitid=$(git rev-parse HEAD)
+  #firebase --project $PROJECT_ID functions:config:set build.tenant=production
+  #firebase --project $PROJECT_ID functions:config:set build.pipeline=local
+
+  #cd ./backend
+  #firebase --project $PROJECT_ID deploy --only functions:api 
+  
+  #cd ..
+  #firebase experiments:enable webframeworks
+  export VITE_COMMIT_ID=$(git rev-parse HEAD)
+  export VITE_BUILD_TIME=$(date '+%Y%m%d-%H%M%S')
+  export VITE_API_BASE_URL=${API_BASE_URL}
+  firebase --project $PROJECT_ID deploy --only hosting
+
+undeploy-firebase:
+  #!/usr/bin/env bash
+  set -eufo pipefail
+  
+
+  #firebase experiments:enable webframeworks
+  firebase --project $PROJECT_ID hosting:disable --site $PROJECT_ID
+
