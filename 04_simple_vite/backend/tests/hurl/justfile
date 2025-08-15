@@ -39,6 +39,19 @@ get-count tenant="local":
 post-count tenant="local": 
   just invoke {{ tenant }} "post-count.hurl"
 
+# put-count endpoint
+put-count tenant="local": 
+  just invoke {{ tenant }} "put-count.hurl"
+
 # get-count endpoint
 get-count-cors-fail tenant="local": 
-  just invoke {{ tenant }} "get-count-cors-fail.hurl"
+  just invoke {{ tenant }} "put-count.hurl"
+
+
+all tenant="local":
+  just get-ping {{ tenant }}
+  just get-count {{ tenant }}
+  just post-count {{ tenant }}
+  just put-count {{ tenant }}
+  just get-count-cors-fail {{ tenant }}
+  just get-swagger {{ tenant }}

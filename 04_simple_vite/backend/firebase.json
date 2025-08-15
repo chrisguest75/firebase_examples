@@ -3,7 +3,7 @@
     {
       "source": ".",
       "codebase": "default",
-      "runtime": "nodejs22",
+      "runtime": "nodejs20",
       "ignore": [
         "**/node_modules/**",
         ".git",

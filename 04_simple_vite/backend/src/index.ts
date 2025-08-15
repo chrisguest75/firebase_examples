@@ -1,24 +1,50 @@
+import { logger } from './logger.js'
 import express from 'express'
-import cors from 'cors'
 import bodyParser from 'body-parser'
+import pino from 'express-pino-logger'
 import swaggerUi from 'swagger-ui-express'
 import { RegisterRoutes } from './routes/routes.js'
+import cors, { CorsOptions } from 'cors'
 import 'reflect-metadata'
 import * as functions from 'firebase-functions'
+import { backendConfig } from './config/config.js'
+import swaggerDocument from '../public/swagger.json' assert { type: "json" };
 
+
+logger.info(`Pino:${logger.version}`)
 const app = express()
 
 // Middleware
-app.use(cors())
+// Configure the CORS middleware
+const allowedOrigins: string[] = ['http://localhost:3000']
+if (backendConfig.frontendUrl) {
+  allowedOrigins.push(backendConfig.frontendUrl)
+}
+logger.info({ allowedOrigins })
+const corsOptions: CorsOptions = {
+  origin: (origin, cb) => {
+    if (!origin) return cb(null, true) // allow non-browser tools
+    cb(null, allowedOrigins.includes(origin))
+  },
+  credentials: true,
+}
+
+app.use((req, _res, next) => {
+  // quick debug to verify what Origin you’re getting
+  logger.info({ origin: req.headers.origin })
+  next()
+})
+
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions)) // handle preflight globally
+
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 
 // Register TSOA routes
 RegisterRoutes(app)
 
-// Swagger UI setup
-app.use('/api/docs', swaggerUi.serve, async (_req: express.Request, res: express.Response) => {
-  const swaggerDocument = await import('../public/swagger.json')
+app.use('/docs', swaggerUi.serve, (_req: express.Request, res: express.Response) => {
   res.send(swaggerUi.generateHTML(swaggerDocument))
 })
 
