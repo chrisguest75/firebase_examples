@@ -68,3 +68,4 @@ just get-count-cors-fail production
 * https://datatracker.ietf.org/doc/html/rfc9110
 * https://tsoa-community.github.io/reference/index.html
 * The firebase.json file [here](https://firebase.google.com/docs/cli#the_firebasejson_file)
+* Connect a custom domain [here](https://firebase.google.com/docs/hosting/custom-domain)
